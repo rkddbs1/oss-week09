@@ -20,7 +20,7 @@ const CITIES = {
 // P1 부터 여기 아래에 씁니다.
 
 import { getForecast } from "./api.js";
-import { toDays } from "./logic.js";
+import { toDays, isGoodDay, summarize } from "./logic.js";
 
 const form = document.getElementById("run-form");
 const citySelect = document.getElementById("city");
@@ -33,7 +33,11 @@ const rowsEl = document.getElementById("rows");
 // 화면에 표시할 데이터
 const state = {
     city: null,
-    days: []
+    days: [],
+    limits: {
+        rain: Number(rainInput.value),
+        wind: Number(windInput.value)
+    }
 };
 
 // 하루 예보를 표의 한 줄로 만들기
@@ -54,11 +58,22 @@ function dayRow(day) {
 
     tr.append(dateTd, maxTd, windTd, rainTd);
 
+    if (isGoodDay(day, state.limits)) {
+    tr.classList.add("good");
+}
+
     return tr;
 }
 
 // state에 저장된 날짜들을 표에 출력
 function render() {
+    if (state.city) {
+        summaryEl.textContent =
+            `${state.city.name}: ${summarize(state.days, state.limits)}.`;
+    } else {
+        summaryEl.textContent = "";
+    }
+
     const rows = state.days.map(dayRow);
     rowsEl.replaceChildren(...rows);
 }
@@ -68,6 +83,11 @@ form.addEventListener("submit", async (event) => {
     event.preventDefault();
 
     const city = CITIES[citySelect.value];
+
+    state.limits = {
+    rain: Number(rainInput.value),
+    wind: Number(windInput.value)
+    };
 
     statusEl.classList.remove("error");
     statusEl.textContent = "Loading...";
