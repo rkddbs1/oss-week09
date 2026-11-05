@@ -18,7 +18,9 @@ const CITIES = {
 };
 
 // P1 부터 여기 아래에 씁니다.
+
 import { getForecast } from "./api.js";
+import { toDays } from "./logic.js";
 
 const form = document.getElementById("run-form");
 const citySelect = document.getElementById("city");
@@ -28,7 +30,40 @@ const statusEl = document.getElementById("status");
 const summaryEl = document.getElementById("summary");
 const rowsEl = document.getElementById("rows");
 
+// 화면에 표시할 데이터
+const state = {
+    city: null,
+    days: []
+};
 
+// 하루 예보를 표의 한 줄로 만들기
+function dayRow(day) {
+    const tr = document.createElement("tr");
+
+    const dateTd = document.createElement("td");
+    dateTd.textContent = day.date.slice(5);
+
+    const maxTd = document.createElement("td");
+    maxTd.textContent = `${day.max}°`;
+
+    const windTd = document.createElement("td");
+    windTd.textContent = `${day.wind} km/h`;
+
+    const rainTd = document.createElement("td");
+    rainTd.textContent = `${day.rain}%`;
+
+    tr.append(dateTd, maxTd, windTd, rainTd);
+
+    return tr;
+}
+
+// state에 저장된 날짜들을 표에 출력
+function render() {
+    const rows = state.days.map(dayRow);
+    rowsEl.replaceChildren(...rows);
+}
+
+// Check 버튼을 눌렀을 때
 form.addEventListener("submit", async (event) => {
     event.preventDefault();
 
@@ -40,13 +75,16 @@ form.addEventListener("submit", async (event) => {
     try {
         const daily = await getForecast(city);
 
-        statusEl.textContent = "";
+        state.city = city;
+        state.days = toDays(daily);
 
-        console.log(daily);
-    } catch (error) {
+        statusEl.textContent = "";
+    } catch (err) {
         statusEl.textContent =
-            `Could not load the forecast (${error.message}).`;
+            `Could not load the forecast (${err.message}).`;
 
         statusEl.classList.add("error");
     }
+
+    render();
 });
