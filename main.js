@@ -18,3 +18,20 @@ const CITIES = {
 };
 
 // P1 부터 여기 아래에 씁니다.
+const form = document.getElementById("run-form");
+const citySelect = document.getElementById("city");
+const rainInput = document.getElementById("rain-limit");
+const windInput = document.getElementById("wind-limit");
+const statusEl = document.getElementById("status");
+const summaryEl = document.getElementById("summary");
+const rowsEl = document.getElementById("rows");
+
+form.addEventListener("submit", (event) => {
+    event.preventDefault();
+
+    const city = CITIES[citySelect.value];
+
+    statusEl.textContent = "Loading...";
+
+    console.log(city);
+});
