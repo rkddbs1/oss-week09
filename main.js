@@ -20,7 +20,7 @@ const CITIES = {
 // P1 부터 여기 아래에 씁니다.
 
 import { getForecast } from "./api.js";
-import { toDays, isGoodDay, summarize } from "./logic.js";
+import { toDays, isGoodDay, summarize, reasons } from "./logic.js";
 
 const form = document.getElementById("run-form");
 const citySelect = document.getElementById("city");
@@ -41,6 +41,7 @@ const state = {
 };
 
 // 하루 예보를 표의 한 줄로 만들기
+
 function dayRow(day) {
     const tr = document.createElement("tr");
 
@@ -56,14 +57,19 @@ function dayRow(day) {
     const rainTd = document.createElement("td");
     rainTd.textContent = `${day.rain}%`;
 
-    tr.append(dateTd, maxTd, windTd, rainTd);
+    // P7: 탈락 이유 표시
+    const reasonTd = document.createElement("td");
+    reasonTd.textContent = reasons(day, state.limits).join(", ");
+
+    tr.append(dateTd, maxTd, windTd, rainTd, reasonTd);
 
     if (isGoodDay(day, state.limits)) {
-    tr.classList.add("good");
-}
+        tr.classList.add("good");
+    }
 
     return tr;
 }
+
 
 // state에 저장된 날짜들을 표에 출력
 function render() {

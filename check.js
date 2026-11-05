@@ -7,7 +7,7 @@
 // 확인: 출력이 주석의 예상과 전부 같습니다.
 // 커밋 메시지: p6: check (P7 에서 늘린 것은 p7: reasons 에 같이)
 
-import { toDays, isGoodDay, summarize } from "./logic.js";
+import { toDays, isGoodDay, summarize, reasons } from "./logic.js";
 
 // 1. 테스트용 날씨 데이터 직접 만들기
 const daily = {
@@ -43,3 +43,19 @@ console.log(summarize(days, limits));
 // 7. 빈 배열 요약 확인
 console.log(summarize([], limits));
 // 예상: good for a run on 0 of 0 days
+
+// P7: 탈락 이유 테스트
+console.log(reasons(days[0], limits)); // [] (둘 다 기준 아래)
+console.log(reasons(days[1], limits)); // [] (둘 다 기준과 같음)
+console.log(reasons(days[2], limits)); // ["wind"] (풍속만 초과)
+console.log(reasons(days[3], limits)); // ["rain"] (강수만 초과)
+
+// P7: 두 조건 모두 초과하는 경우
+const badDay = {
+    date: "11-25",
+    max: 13,
+    wind: 11.2,
+    rain: 57
+};
+
+console.log(reasons(badDay, limits)); // ["rain", "wind"] (둘 다 초과)

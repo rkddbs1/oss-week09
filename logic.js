@@ -9,6 +9,7 @@
 //       그래야 P6 에서 브라우저 없이 node 로 돌릴 수 있습니다.
 // 커밋 메시지: p3: rows / p4: rule / p7: reasons
 
+
 export function toDays(daily) {
     return daily.time.map((date, i) => ({
         date: date,
@@ -18,11 +19,27 @@ export function toDays(daily) {
     }));
 }
 
-export function isGoodDay(day, limits) {
-    return day.rain <= limits.rain &&
-           day.wind <= limits.wind;
+// 기준을 초과한 이유를 배열로 반환
+export function reasons(day, limits) {
+    const result = [];
+
+    if (day.rain > limits.rain) {
+        result.push("rain");
+    }
+
+    if (day.wind > limits.wind) {
+        result.push("wind");
+    }
+
+    return result;
 }
 
+// 탈락 이유가 없으면 좋은 날
+export function isGoodDay(day, limits) {
+    return reasons(day, limits).length === 0;
+}
+
+// 달리기 좋은 날의 수 계산
 export function summarize(days, limits) {
     const goodDays = days.filter(day => isGoodDay(day, limits));
 
