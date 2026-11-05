@@ -18,6 +18,8 @@ const CITIES = {
 };
 
 // P1 부터 여기 아래에 씁니다.
+import { getForecast } from "./api.js";
+
 const form = document.getElementById("run-form");
 const citySelect = document.getElementById("city");
 const rainInput = document.getElementById("rain-limit");
@@ -26,12 +28,25 @@ const statusEl = document.getElementById("status");
 const summaryEl = document.getElementById("summary");
 const rowsEl = document.getElementById("rows");
 
-form.addEventListener("submit", (event) => {
+
+form.addEventListener("submit", async (event) => {
     event.preventDefault();
 
     const city = CITIES[citySelect.value];
 
+    statusEl.classList.remove("error");
     statusEl.textContent = "Loading...";
 
-    console.log(city);
+    try {
+        const daily = await getForecast(city);
+
+        statusEl.textContent = "";
+
+        console.log(daily);
+    } catch (error) {
+        statusEl.textContent =
+            `Could not load the forecast (${error.message}).`;
+
+        statusEl.classList.add("error");
+    }
 });
